@@ -1,0 +1,92 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type IniciarLecturaButtonProps = {
+  slug?: string | null;
+  hasAccess?: boolean;
+  purchaseStatus?: string | null;
+  previewAvailable?: boolean;
+  checkoutPath?: string;
+};
+
+const VALID_ACCESS_STATUSES = new Set([
+  "paid",
+  "completed",
+  "approved",
+  "succeeded",
+]);
+
+export function IniciarLecturaButton({
+  slug = "lectura-demo",
+  hasAccess = true,
+  purchaseStatus,
+  previewAvailable = false,
+  checkoutPath,
+}: IniciarLecturaButtonProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const normalizedStatus = String(purchaseStatus || "").toLowerCase();
+  const canRead = hasAccess || VALID_ACCESS_STATUSES.has(normalizedStatus);
+
+  function handleStartReading() {
+    if (loading) return;
+
+    setLoading(true);
+
+    const safeSlug = encodeURIComponent(slug || "lectura-demo");
+
+    if (canRead) {
+      router.push(`/reader/${safeSlug}`);
+      return;
+    }
+
+    if (previewAvailable) {
+      router.push(`/catalog/${safeSlug}/preview`);
+      return;
+    }
+
+    if (checkoutPath) {
+      router.push(checkoutPath);
+      return;
+    }
+
+    router.push(`/checkout?slug=${safeSlug}`);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleStartReading}
+      disabled={loading}
+      style={{
+        width: "100%",
+        border: "0",
+        borderRadius: "999px",
+        padding: "14px 22px",
+        fontSize: "16px",
+        fontWeight: 900,
+        cursor: loading ? "not-allowed" : "pointer",
+        background: loading
+          ? "linear-gradient(135deg, #64748b, #94a3b8)"
+          : "linear-gradient(135deg, #facc15, #f97316)",
+        color: "#111827",
+        boxShadow: "0 16px 35px rgba(249, 115, 22, 0.35)",
+        opacity: loading ? 0.75 : 1,
+        transition: "transform 160ms ease, opacity 160ms ease",
+      }}
+      onMouseEnter={(event) => {
+        event.currentTarget.style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={(event) => {
+        event.currentTarget.style.transform = "translateY(0)";
+      }}
+    >
+      {loading ? "Abriendo lectura..." : "Iniciar lectura"}
+    </button>
+  );
+}
+
+export default IniciarLecturaButton;

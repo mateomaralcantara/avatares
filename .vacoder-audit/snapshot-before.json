@@ -1,0 +1,156 @@
+﻿[
+    {
+        "Path":  "middleware.ts",
+        "Hash":  "5CC93D5273CFE5E73B4AD27741E05BCCEA5FD25F0B9277BFD38819EB98DFD4B4",
+        "Size":  329,
+        "Lines":  12,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "next-env.d.ts",
+        "Hash":  "083E23C4C5E7761DB151134EA1EF7896120C86C5888CDC8A861F534F7E86D6FD",
+        "Size":  257,
+        "Lines":  7,
+        "ModifiedAt":  "2026-06-14 00:46:03"
+    },
+    {
+        "Path":  "next.config.ts",
+        "Hash":  "77CABBA827434A83537DA894292C2080EAC793EC9D60D8D71FB72BDE1784566D",
+        "Size":  144,
+        "Lines":  8,
+        "ModifiedAt":  "2026-06-13 23:05:48"
+    },
+    {
+        "Path":  "package-lock.json",
+        "Hash":  "71D40EB1F437EC6564FDAF881E1D9DAA009E777A84B138B433E415094BFA812C",
+        "Size":  222201,
+        "Lines":  6330,
+        "ModifiedAt":  "2026-06-13 23:42:53"
+    },
+    {
+        "Path":  "package.json",
+        "Hash":  "1BA000562E86F0428AE197F52B0905E1C52AABAA3C4FCEDF81BBED59C5BFC7BA",
+        "Size":  559,
+        "Lines":  27,
+        "ModifiedAt":  "2026-06-13 23:08:35"
+    },
+    {
+        "Path":  "README.md",
+        "Hash":  "FB134B4FD1ED5A35E079FD97CC5760B2A49557128BFE1E0ABE4F3D1615A3E213",
+        "Size":  6530,
+        "Lines":  318,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "tsconfig.json",
+        "Hash":  "50A53EC4A582BD0412678588A1D117F209EDBBD50562F1B16B3FFA66BE6BAB7D",
+        "Size":  700,
+        "Lines":  42,
+        "ModifiedAt":  "2026-06-13 23:41:22"
+    },
+    {
+        "Path":  "app\\globals.css",
+        "Hash":  "F25E377B0D3913E652D819D59CC2ED6444A7B05463181989134039ACC6D22E0F",
+        "Size":  3197,
+        "Lines":  177,
+        "ModifiedAt":  "2026-06-13 23:05:48"
+    },
+    {
+        "Path":  "app\\layout.tsx",
+        "Hash":  "A366654711C06C331C32C7DB05742BA82DB0B3BFE8334CF0F99A9D22913C23B2",
+        "Size":  463,
+        "Lines":  20,
+        "ModifiedAt":  "2026-06-13 23:35:20"
+    },
+    {
+        "Path":  "app\\page.tsx",
+        "Hash":  "17BD01E2A6158C7F54EB75B4722254C10F21CCD0B7C45F65829F927629D1E7D2",
+        "Size":  15785,
+        "Lines":  598,
+        "ModifiedAt":  "2026-06-13 23:58:09"
+    },
+    {
+        "Path":  "app\\admin\\page.tsx",
+        "Hash":  "41422D585BFFFFB9FAE17341A30752F8FF18BFDA6C52533EFACFAB3113F0AC8B",
+        "Size":  1225,
+        "Lines":  43,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "app\\api\\health\\route.ts",
+        "Hash":  "41245E04D776151FB610FEC555F61AEB07841ED431EA74167C011F7D14953B27",
+        "Size":  204,
+        "Lines":  10,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "app\\dashboard\\page.tsx",
+        "Hash":  "472BE4111B6E8A200A73B14A3A727CFF577CFC5CDE7526A6CD19DB4E615614CA",
+        "Size":  1063,
+        "Lines":  29,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "app\\login\\page.tsx",
+        "Hash":  "0BF23D59F6E3057CC9B9247AF1B9E2FA5FFCBC4FD203209E08FA3E27CF936C1A",
+        "Size":  881,
+        "Lines":  29,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "components\\BookUploadArea.tsx",
+        "Hash":  "ADD93FB6A2E80B1B2E55F5DDEF4C0ED5BF1100D1B340233A5CE6F1BF041FE66D",
+        "Size":  4812,
+        "Lines":  200,
+        "ModifiedAt":  "2026-06-13 23:55:59"
+    },
+    {
+        "Path":  "components\\feature-grid.tsx",
+        "Hash":  "202470DA2AF25338DA93F9D4ED2C149DB31E1F25CAC29F2B3C28CF309BF47E4D",
+        "Size":  719,
+        "Lines":  27,
+        "ModifiedAt":  "2026-06-13 23:05:48"
+    },
+    {
+        "Path":  "components\\navbar.tsx",
+        "Hash":  "6DCE095C1627929DBC328D18C901451120592CC8ACD13E7B7B1EEDB4AD8CCEC1",
+        "Size":  494,
+        "Lines":  19,
+        "ModifiedAt":  "2026-06-13 23:05:48"
+    },
+    {
+        "Path":  "components\\section-card.tsx",
+        "Hash":  "1E972BB78468154C73F8A42ADF4A66CF54F7E584FA6155DC09DB0B44FBD58C1C",
+        "Size":  282,
+        "Lines":  14,
+        "ModifiedAt":  "2026-06-13 23:05:48"
+    },
+    {
+        "Path":  "lib\\env.ts",
+        "Hash":  "3B79115591539CBC0F6047E5C21F503BD7A1E25ED7486A3F1D930D05195244BB",
+        "Size":  456,
+        "Lines":  17,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "lib\\supabase.ts",
+        "Hash":  "D6ADD038155E1CFFD1E170D7E1BC738989A18C52EE7DF712DCD0B2B2C557424A",
+        "Size":  338,
+        "Lines":  11,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "lib\\validators.ts",
+        "Hash":  "51128087F346E234365377809E39968A6BFDD4A97A6D446190DC240C4A5BA7CB",
+        "Size":  251,
+        "Lines":  8,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    },
+    {
+        "Path":  "types\\app.ts",
+        "Hash":  "1C94B4427138C0D2C33EECB6C766F82DBA503BD6626F45C80B27CEBBB37EBECD",
+        "Size":  209,
+        "Lines":  8,
+        "ModifiedAt":  "2026-06-13 23:05:49"
+    }
+]

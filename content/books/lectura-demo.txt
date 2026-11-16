@@ -1,0 +1,19 @@
+# Lectura Demo Limpia
+
+Este es un libro limpio de prueba. Ya no contiene código técnico, scripts ni comandos de PowerShell.
+
+Capítulo 1: Inicio del libro
+
+Este capítulo confirma que el agente de voz está leyendo contenido real de libro. Si escuchas este texto, significa que el lector ya no está leyendo código contaminado.
+
+Capítulo 2: Cómo funciona el agente
+
+Cuando subas un libro real desde la página de subida, el sistema extraerá el texto, lo guardará como archivo limpio y abrirá el lector para que el agente lo lea por voz.
+
+Capítulo 3: Libro completo
+
+Para escuchar un libro completo, debes subir un archivo real en TXT, MD, PDF, DOCX o EPUB. Si el PDF es una imagen escaneada, no se podrá extraer texto sin OCR.
+
+Capítulo 4: Cierre
+
+Este contenido es solo una prueba limpia. El próximo paso es subir tu libro real desde la página de subida y confirmar que el agente detecta muchas palabras y capítulos reales.

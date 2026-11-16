@@ -1,0 +1,553 @@
+{
+  "scannerVersion": "2.0.0",
+  "project": "C:\\Users\\martin\\Desktop\\VSC\\APPS\\avatares",
+  "generatedAt": "2026-07-31T19:25:24.113Z",
+  "options": {
+    "minimumScore": 8,
+    "skipBuild": true,
+    "skipTests": true,
+    "skipAudit": true
+  },
+  "passed": false,
+  "finalScore": 3.24,
+  "finalPercentage": 32.4,
+  "grade": "F",
+  "totalEarned": 32.55,
+  "totalMaximum": 100.5,
+  "categories": [
+    {
+      "category": "Entorno",
+      "earned": 5.9,
+      "maximum": 8,
+      "score": 7.38,
+      "percentage": 73.8
+    },
+    {
+      "category": "Arquitectura",
+      "earned": 6.5,
+      "maximum": 10.5,
+      "score": 6.19,
+      "percentage": 61.9
+    },
+    {
+      "category": "TypeScript",
+      "earned": 1.25,
+      "maximum": 14,
+      "score": 0.89,
+      "percentage": 8.9
+    },
+    {
+      "category": "Lint",
+      "earned": 0,
+      "maximum": 10,
+      "score": 0,
+      "percentage": 0
+    },
+    {
+      "category": "Build",
+      "earned": 2,
+      "maximum": 15,
+      "score": 1.33,
+      "percentage": 13.3
+    },
+    {
+      "category": "Pruebas",
+      "earned": 0,
+      "maximum": 12,
+      "score": 0,
+      "percentage": 0
+    },
+    {
+      "category": "Seguridad",
+      "earned": 5,
+      "maximum": 12,
+      "score": 4.17,
+      "percentage": 41.7
+    },
+    {
+      "category": "Accesibilidad",
+      "earned": 4,
+      "maximum": 7,
+      "score": 5.71,
+      "percentage": 57.1
+    },
+    {
+      "category": "Rendimiento",
+      "earned": 4.9,
+      "maximum": 7,
+      "score": 7,
+      "percentage": 70
+    },
+    {
+      "category": "Producción",
+      "earned": 3,
+      "maximum": 5,
+      "score": 6,
+      "percentage": 60
+    }
+  ],
+  "checks": [
+    {
+      "category": "Entorno",
+      "name": "package.json válido",
+      "status": "PASS",
+      "earned": 2,
+      "maximum": 2,
+      "percentage": 100,
+      "details": "El manifiesto del proyecto es válido.",
+      "recommendation": "Corrige package.json."
+    },
+    {
+      "category": "Entorno",
+      "name": "Lockfile reproducible",
+      "status": "WARN",
+      "earned": 0.5,
+      "maximum": 1,
+      "percentage": 50,
+      "details": "Detectados: package-lock.json, yarn.lock.",
+      "recommendation": "Conserva solamente el lockfile del gestor de paquetes utilizado."
+    },
+    {
+      "category": "Entorno",
+      "name": "Versión de Node.js",
+      "status": "PASS",
+      "earned": 2,
+      "maximum": 2,
+      "percentage": 100,
+      "details": "Instalada: v24.11.1. Engines: no definido.",
+      "recommendation": "Actualiza Node.js a una versión compatible."
+    },
+    {
+      "category": "Entorno",
+      "name": "Dependencias instaladas",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "node_modules está disponible.",
+      "recommendation": "Ejecuta npm install."
+    },
+    {
+      "category": "Entorno",
+      "name": "Repositorio Git",
+      "status": "WARN",
+      "earned": 0,
+      "maximum": 1,
+      "percentage": 0,
+      "details": "No se detectó repositorio Git.",
+      "recommendation": ""
+    },
+    {
+      "category": "Entorno",
+      "name": "Versión fijada en engines",
+      "status": "WARN",
+      "earned": 0.4,
+      "maximum": 1,
+      "percentage": 40,
+      "details": "package.json no define engines.node.",
+      "recommendation": "Define engines.node en package.json."
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Router organizado",
+      "status": "PASS",
+      "earned": 2,
+      "maximum": 2,
+      "percentage": 100,
+      "details": "Se detectó App Router o Pages Router.",
+      "recommendation": ""
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Componentes separados",
+      "status": "PASS",
+      "earned": 1.5,
+      "maximum": 1.5,
+      "percentage": 100,
+      "details": "Existe una carpeta de componentes.",
+      "recommendation": ""
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Lógica reutilizable separada",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "Se detectó una capa lib, services o server.",
+      "recommendation": ""
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Tamaño de archivos fuente",
+      "status": "WARN",
+      "earned": 1,
+      "maximum": 2,
+      "percentage": 50,
+      "details": "2 archivo(s) superan 600 líneas.",
+      "recommendation": "Divide componentes y servicios demasiado grandes."
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Respaldos dentro del proyecto",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "0 respaldo(s) internos detectados.",
+      "recommendation": "Mueve respaldos fuera del código fuente y usa Git."
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Contenido demo o pendiente",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 1.5,
+      "percentage": 0,
+      "details": "30 marcador(es) demo, TODO o FIXME.",
+      "recommendation": "Elimina contenido temporal."
+    },
+    {
+      "category": "Arquitectura",
+      "name": "Logs de depuración",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 1.5,
+      "percentage": 0,
+      "details": "59 console.log o console.debug detectados.",
+      "recommendation": "Usa un logger controlado por entorno."
+    },
+    {
+      "category": "TypeScript",
+      "name": "Configuración TypeScript",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "tsconfig.json no existe o no se pudo analizar.",
+      "recommendation": ""
+    },
+    {
+      "category": "TypeScript",
+      "name": "Modo strict",
+      "status": "WARN",
+      "earned": 0.5,
+      "maximum": 2,
+      "percentage": 25,
+      "details": "compilerOptions.strict no está activado.",
+      "recommendation": "Activa strict en tsconfig.json."
+    },
+    {
+      "category": "TypeScript",
+      "name": "Uso explícito de any",
+      "status": "WARN",
+      "earned": 0.75,
+      "maximum": 2,
+      "percentage": 37.5,
+      "details": "11 uso(s) potenciales de any.",
+      "recommendation": "Sustituye any por interfaces, genéricos o unknown."
+    },
+    {
+      "category": "TypeScript",
+      "name": "Compilación de tipos",
+      "status": "SKIP",
+      "earned": 0,
+      "maximum": 8,
+      "percentage": 0,
+      "details": "No fue posible ejecutar TypeScript por falta de configuración o dependencias.",
+      "recommendation": ""
+    },
+    {
+      "category": "Lint",
+      "name": "Configuración ESLint",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "Script lint: false. Configuración: false.",
+      "recommendation": ""
+    },
+    {
+      "category": "Lint",
+      "name": "Ejecución ESLint",
+      "status": "SKIP",
+      "earned": 0,
+      "maximum": 8,
+      "percentage": 0,
+      "details": "No existe script lint o faltan dependencias.",
+      "recommendation": ""
+    },
+    {
+      "category": "Build",
+      "name": "Script de compilación",
+      "status": "PASS",
+      "earned": 2,
+      "maximum": 2,
+      "percentage": 100,
+      "details": "npm run build está definido.",
+      "recommendation": ""
+    },
+    {
+      "category": "Build",
+      "name": "Build de producción",
+      "status": "SKIP",
+      "earned": 0,
+      "maximum": 11,
+      "percentage": 0,
+      "details": "Build omitido mediante --skip-build.",
+      "recommendation": ""
+    },
+    {
+      "category": "Build",
+      "name": "Advertencias del build",
+      "status": "SKIP",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "No se ejecutó el build.",
+      "recommendation": ""
+    },
+    {
+      "category": "Pruebas",
+      "name": "Script de pruebas",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "No existe script test.",
+      "recommendation": ""
+    },
+    {
+      "category": "Pruebas",
+      "name": "Archivos de prueba",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "0 archivo(s) de prueba detectados.",
+      "recommendation": ""
+    },
+    {
+      "category": "Pruebas",
+      "name": "Ejecución de pruebas",
+      "status": "SKIP",
+      "earned": 0,
+      "maximum": 6,
+      "percentage": 0,
+      "details": "Pruebas omitidas mediante --skip-tests.",
+      "recommendation": ""
+    },
+    {
+      "category": "Pruebas",
+      "name": "Configuración de cobertura",
+      "status": "WARN",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "No se detectó configuración de cobertura.",
+      "recommendation": ""
+    },
+    {
+      "category": "Seguridad",
+      "name": "Auditoría de dependencias",
+      "status": "SKIP",
+      "earned": 0,
+      "maximum": 5,
+      "percentage": 0,
+      "details": "Auditoría omitida mediante --skip-audit.",
+      "recommendation": ""
+    },
+    {
+      "category": "Seguridad",
+      "name": "Secretos en código",
+      "status": "PASS",
+      "earned": 4,
+      "maximum": 4,
+      "percentage": 100,
+      "details": "0 coincidencia(s) potenciales.",
+      "recommendation": "Mueve claves y tokens a variables de entorno."
+    },
+    {
+      "category": "Seguridad",
+      "name": "APIs potencialmente peligrosas",
+      "status": "WARN",
+      "earned": 1,
+      "maximum": 2,
+      "percentage": 50,
+      "details": "2 uso(s) de eval, Function o dangerouslySetInnerHTML.",
+      "recommendation": ""
+    },
+    {
+      "category": "Seguridad",
+      "name": "Variables privadas fuera de Git",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 1,
+      "percentage": 0,
+      "details": "1 archivo(s) privados rastreados por Git.",
+      "recommendation": "Elimina los archivos .env privados del repositorio."
+    },
+    {
+      "category": "Accesibilidad",
+      "name": "Texto alternativo",
+      "status": "FAIL",
+      "earned": 0,
+      "maximum": 2,
+      "percentage": 0,
+      "details": "0 de 1 imágenes incluyen alt.",
+      "recommendation": ""
+    },
+    {
+      "category": "Accesibilidad",
+      "name": "Botones identificables",
+      "status": "PASS",
+      "earned": 2,
+      "maximum": 2,
+      "percentage": 100,
+      "details": "18 de 18 botones tienen texto o etiqueta.",
+      "recommendation": ""
+    },
+    {
+      "category": "Accesibilidad",
+      "name": "Estructura semántica",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "11 landmarks semánticos detectados.",
+      "recommendation": ""
+    },
+    {
+      "category": "Accesibilidad",
+      "name": "Atributos ARIA",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "1 atributo(s) ARIA detectados.",
+      "recommendation": ""
+    },
+    {
+      "category": "Accesibilidad",
+      "name": "Estados de carga y error",
+      "status": "WARN",
+      "earned": 0,
+      "maximum": 1,
+      "percentage": 0,
+      "details": "No se detectaron loading, error o not-found.",
+      "recommendation": ""
+    },
+    {
+      "category": "Rendimiento",
+      "name": "Optimización de imágenes",
+      "status": "WARN",
+      "earned": 1,
+      "maximum": 2,
+      "percentage": 50,
+      "details": "next/image: 1. img nativo: 1.",
+      "recommendation": ""
+    },
+    {
+      "category": "Rendimiento",
+      "name": "Activos pesados",
+      "status": "PASS",
+      "earned": 2,
+      "maximum": 2,
+      "percentage": 100,
+      "details": "0 archivo(s) públicos superan 2 MB.",
+      "recommendation": "Comprime imágenes, audio, video y fuentes."
+    },
+    {
+      "category": "Rendimiento",
+      "name": "Complejidad de módulos",
+      "status": "WARN",
+      "earned": 0.5,
+      "maximum": 1,
+      "percentage": 50,
+      "details": "2 módulo(s) superan 600 líneas.",
+      "recommendation": ""
+    },
+    {
+      "category": "Rendimiento",
+      "name": "Carga diferida",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "3 importación(es) dinámicas detectadas.",
+      "recommendation": ""
+    },
+    {
+      "category": "Rendimiento",
+      "name": "Optimización de fuentes",
+      "status": "WARN",
+      "earned": 0.4,
+      "maximum": 1,
+      "percentage": 40,
+      "details": "0 uso(s) de next/font detectados.",
+      "recommendation": ""
+    },
+    {
+      "category": "Producción",
+      "name": "Documentación README",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "README encontrado.",
+      "recommendation": ""
+    },
+    {
+      "category": "Producción",
+      "name": "Plantilla de variables",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "Existe una plantilla de variables.",
+      "recommendation": ""
+    },
+    {
+      "category": "Producción",
+      "name": "Metadatos SEO",
+      "status": "PASS",
+      "earned": 1,
+      "maximum": 1,
+      "percentage": 100,
+      "details": "1 definición(es) de metadata detectadas.",
+      "recommendation": ""
+    },
+    {
+      "category": "Producción",
+      "name": "Páginas de error",
+      "status": "WARN",
+      "earned": 0,
+      "maximum": 1,
+      "percentage": 0,
+      "details": "No se detectaron páginas de error personalizadas.",
+      "recommendation": ""
+    },
+    {
+      "category": "Producción",
+      "name": "Integración continua",
+      "status": "WARN",
+      "earned": 0,
+      "maximum": 1,
+      "percentage": 0,
+      "details": "No se detectó pipeline CI.",
+      "recommendation": ""
+    }
+  ],
+  "largeSourceFiles": [
+    {
+      "file": "scripts\\quality-scan.mjs",
+      "lines": 1859
+    },
+    {
+      "file": "components\\book-voice-agent.tsx",
+      "lines": 708
+    }
+  ],
+  "backupFiles": [],
+  "largeAssets": []
+}

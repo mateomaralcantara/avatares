@@ -1,0 +1,651 @@
+# ============================================================
+# CONECTAR AGENTE DE VOZ AL LIBRO COMPLETO REAL
+# Proyecto: avatares / Next.js App Router
+#
+# Este script:
+# 1. Crea content/books/lectura-demo.txt
+# 2. Actualiza lib/demo-reading-content.ts
+# 3. Hace que el lector lea TODO el contenido del .txt
+# 4. Divide automáticamente el libro por capítulos
+#
+# IMPORTANTE:
+# - Si copiaste el libro completo al portapapeles, este script lo pega
+#   automáticamente dentro de content/books/lectura-demo.txt.
+# - Si el portapapeles está vacío, crea un archivo de ejemplo para que pegues
+#   ahí el libro completo.
+# ============================================================
+
+$ErrorActionPreference = "Stop"
+
+$projectPath = "C:\Users\martin\Desktop\VSC\APPS\avatares"
+Set-Location -Path $projectPath
+
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+function Write-AppFile {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$Path,
+
+    [Parameter(Mandatory = $true)]
+    [string]$Content
+  )
+
+  $directory = [System.IO.Path]::GetDirectoryName($Path)
+
+  if (![System.IO.Directory]::Exists($directory)) {
+    [System.IO.Directory]::CreateDirectory($directory) | Out-Null
+  }
+
+  if ([System.IO.File]::Exists($Path)) {
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $backupPath = "$Path.bak-$timestamp"
+    [System.IO.File]::Copy($Path, $backupPath, $true)
+    Write-Host "Backup creado:" -ForegroundColor Green
+    Write-Host $backupPath -ForegroundColor Yellow
+  }
+
+  [System.IO.File]::WriteAllText($Path, $Content, $utf8NoBom)
+
+  Write-Host "OK archivo creado/actualizado:" -ForegroundColor Green
+  Write-Host $Path -ForegroundColor Yellow
+  Write-Host ""
+}
+
+Write-Host ""
+Write-Host "========================================" -ForegroundColor DarkGray
+Write-Host "CONECTANDO LIBRO COMPLETO AL AGENTE" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor DarkGray
+Write-Host ""
+
+# ============================================================
+# 1. CREAR ARCHIVO REAL DEL LIBRO
+# ============================================================
+
+$bookTextPath = [System.IO.Path]::Combine(
+  $projectPath,
+  "content",
+  "books",
+  "lectura-demo.txt"
+)
+
+$clipboardText = ""
+
+try {
+  $clipboardText = Get-Clipboard -Raw
+} catch {
+  $clipboardText = ""
+}
+
+if ($clipboardText -and $clipboardText.Trim().Length -gt 500) {
+  $bookTextContent = $clipboardText.Trim()
+
+  Write-Host "Se detectó texto largo en el portapapeles." -ForegroundColor Green
+  Write-Host "Ese texto será usado como libro completo." -ForegroundColor Green
+  Write-Host ""
+} else {
+  $bookTextContent = @'
+# Lectura Demo
+
+Este archivo es la fuente real del libro.
+
+Para que el agente lea el libro completo completo, pega aquí TODO el libro:
+portada, introducción, capítulos y cierre.
+
+Capítulo 1: Inicio del libro
+
+Este es el primer capítulo de ejemplo. Reemplaza este contenido por el texto real del libro completo.
+
+Capítulo 2: Desarrollo
+
+Este es el segundo capítulo de ejemplo. El agente narrador leerá cada capítulo en orden.
+
+Capítulo 3: Cierre
+
+Este es el tercer capítulo de ejemplo. Cuando pegues el libro completo aquí, el agente leerá todo el contenido real.
+'@
+}
+
+Write-AppFile -Path $bookTextPath -Content $bookTextContent
+
+# ============================================================
+# 2. ACTUALIZAR lib/demo-reading-content.ts
+# Ahora lee desde content/books/[slug].txt
+# ============================================================
+
+$libPath = [System.IO.Path]::Combine(
+  $projectPath,
+  "lib",
+  "demo-reading-content.ts"
+)
+
+$libContent = @'
+import fs from "node:fs";
+import path from "node:path";
+
+export type DemoChapter = {
+  number: number;
+  title: string;
+  body: string;
+};
+
+export type DemoReadingContent = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  promise: string;
+  audience: string;
+  highlights: string[];
+  chapters: DemoChapter[];
+  fullText: string;
+};
+
+function decodeSlug(slug: string) {
+  try {
+    return decodeURIComponent(slug || "lectura-demo");
+  } catch {
+    return slug || "lectura-demo";
+  }
+}
+
+function titleFromSlug(slug: string) {
+  const decoded = decodeSlug(slug);
+  const clean = decoded.replace(/[-_]+/g, " ").trim();
+
+  if (!clean) {
+    return "Lectura Demo";
+  }
+
+  return clean.charAt(0).toUpperCase() + clean.slice(1);
+}
+
+function cleanText(value: string) {
+  return String(value || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .trim();
+}
+
+function removeMarkdownTitle(line: string) {
+  return line
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^t[ií]tulo\s*:\s*/i, "")
+    .trim();
+}
+
+function getTitleFromText(rawText: string, slug: string) {
+  const lines = cleanText(rawText)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const firstTitleLine = lines.find((line) =>
+    /^#{1,2}\s+/.test(line) || /^t[ií]tulo\s*:/i.test(line)
+  );
+
+  if (firstTitleLine) {
+    return removeMarkdownTitle(firstTitleLine);
+  }
+
+  return titleFromSlug(slug);
+}
+
+function truncateText(value: string, maxLength: number) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
+function getSummaryFromText(rawText: string) {
+  const cleaned = cleanText(rawText)
+    .replace(/^#{1,6}\s+.+$/gm, "")
+    .replace(/^cap[ií]tulo\s+\d+.*$/gim, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  const paragraphs = cleaned
+    .split(/\n\s*\n/g)
+    .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
+    .filter((paragraph) => paragraph.length > 80);
+
+  if (paragraphs.length > 0) {
+    return truncateText(paragraphs.slice(0, 2).join(" "), 950);
+  }
+
+  return "Este libro ya está conectado al agente lector. El sistema leerá el texto completo cargado en content/books.";
+}
+
+function splitLargeTextIntoParts(text: string, maxLength = 8000) {
+  const clean = cleanText(text);
+  const parts: string[] = [];
+  let current = "";
+
+  const paragraphs = clean
+    .split(/\n\s*\n/g)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  for (const paragraph of paragraphs) {
+    const next = `${current}\n\n${paragraph}`.trim();
+
+    if (next.length > maxLength && current.length > 0) {
+      parts.push(current.trim());
+      current = paragraph;
+    } else {
+      current = next;
+    }
+  }
+
+  if (current.trim()) {
+    parts.push(current.trim());
+  }
+
+  return parts;
+}
+
+function parseChapters(rawText: string): DemoChapter[] {
+  const text = cleanText(rawText);
+
+  const chapterHeaderRegex =
+    /(?:^|\n)(?:#{1,6}\s*)?(?:cap[ií]tulo|chapter)\s+([0-9]+|[ivxlcdm]+)?[^\n]*/gi;
+
+  const matches = Array.from(text.matchAll(chapterHeaderRegex));
+
+  if (matches.length === 0) {
+    const parts = splitLargeTextIntoParts(text);
+
+    return parts.map((part, index) => ({
+      number: index + 1,
+      title: `Parte ${index + 1}`,
+      body: part,
+    }));
+  }
+
+  const chapters: DemoChapter[] = [];
+
+  for (let index = 0; index < matches.length; index++) {
+    const match = matches[index];
+    const nextMatch = matches[index + 1];
+
+    const headerStart = match.index ?? 0;
+    const headerText = match[0].replace(/^\n/, "").trim();
+    const bodyStart = headerStart + match[0].length;
+    const bodyEnd = nextMatch?.index ?? text.length;
+
+    const body = text.slice(bodyStart, bodyEnd).trim();
+
+    chapters.push({
+      number: index + 1,
+      title: headerText || `Capítulo ${index + 1}`,
+      body: body || "Este capítulo no tiene contenido todavía.",
+    });
+  }
+
+  return chapters;
+}
+
+function getFallbackBookText(slug: string) {
+  const title = titleFromSlug(slug);
+
+  return `# ${title}
+
+Este libro todavía no tiene texto completo cargado.
+
+Capítulo 1: Contenido pendiente
+
+Pega el libro completo en content/books/${slug}.txt para que el agente pueda leerlo completo.
+
+Capítulo 2: Lectura completa
+
+Cuando el archivo tenga el texto real, el agente leerá todos los capítulos en orden.
+
+Capítulo 3: Cierre
+
+La lectura completa depende del texto que exista dentro del archivo del libro.`;
+}
+
+function readBookText(slug: string) {
+  const safeSlug = slug || "lectura-demo";
+
+  const filePath = path.join(
+    process.cwd(),
+    "content",
+    "books",
+    `${safeSlug}.txt`
+  );
+
+  if (fs.existsSync(filePath)) {
+    return fs.readFileSync(filePath, "utf8");
+  }
+
+  return getFallbackBookText(safeSlug);
+}
+
+export function getDemoReadingContent(slug: string): DemoReadingContent {
+  const safeSlug = slug || "lectura-demo";
+  const rawText = readBookText(safeSlug);
+  const fullText = cleanText(rawText);
+  const title = getTitleFromText(fullText, safeSlug);
+  const summary = getSummaryFromText(fullText);
+  const chapters = parseChapters(fullText);
+
+  return {
+    slug: safeSlug,
+    title,
+    subtitle: "Libro completo conectado al agente narrador de voz.",
+    summary,
+    promise:
+      "El agente leerá el contenido completo cargado en el archivo del libro, dividido por capítulos o partes.",
+    audience:
+      "Lectores que desean escuchar el libro completo desde el navegador.",
+    highlights: [
+      "Lectura completa desde archivo real.",
+      "División automática por capítulos.",
+      "Narración por voz dentro del lector.",
+      "Compatible con libros largos en formato TXT.",
+    ],
+    chapters,
+    fullText,
+  };
+}
+'@
+
+Write-AppFile -Path $libPath -Content $libContent
+
+# ============================================================
+# 3. ACTUALIZAR LECTOR PARA MOSTRAR QUE ES LIBRO REAL
+# ============================================================
+
+$readerPagePath = [System.IO.Path]::Combine(
+  $projectPath,
+  "app",
+  "reader",
+  "[slug]",
+  "page.tsx"
+)
+
+$readerPageContent = @'
+import Link from "next/link";
+import { BookVoiceAgent } from "../../../components/book-voice-agent";
+import { getDemoReadingContent } from "../../../lib/demo-reading-content";
+
+type ReaderPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function ReaderPage({ params }: ReaderPageProps) {
+  const { slug } = await params;
+  const book = getDemoReadingContent(slug);
+  const safeSlug = encodeURIComponent(book.slug);
+
+  const introText = [
+    book.title,
+    book.subtitle,
+    "Este es el inicio de la lectura completa del libro.",
+    book.summary,
+  ].join(". ");
+
+  const totalWords = book.fullText
+    .split(/\s+/g)
+    .filter(Boolean)
+    .length;
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "48px 20px",
+        background:
+          "radial-gradient(circle at top, rgba(249,115,22,0.22), transparent 35%), #020617",
+        color: "white",
+      }}
+    >
+      <article
+        style={{
+          maxWidth: "980px",
+          margin: "0 auto",
+          borderRadius: "28px",
+          padding: "36px",
+          border: "1px solid rgba(255,255,255,0.14)",
+          background: "rgba(15,23,42,0.94)",
+          boxShadow: "0 30px 80px rgba(0,0,0,0.35)",
+        }}
+      >
+        <p
+          style={{
+            margin: "0 0 10px",
+            color: "#facc15",
+            fontWeight: 900,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
+          Agente lector del libro completo
+        </p>
+
+        <h1
+          style={{
+            margin: "0 0 14px",
+            fontSize: "clamp(34px, 6vw, 62px)",
+            lineHeight: 1,
+          }}
+        >
+          {book.title}
+        </h1>
+
+        <p
+          style={{
+            fontSize: "19px",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.78)",
+          }}
+        >
+          {book.subtitle}
+        </p>
+
+        <div
+          style={{
+            marginTop: "18px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
+          }}
+        >
+          <span
+            style={{
+              borderRadius: "999px",
+              padding: "10px 14px",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              color: "rgba(255,255,255,0.82)",
+              fontWeight: 800,
+            }}
+          >
+            Capítulos detectados: {book.chapters.length}
+          </span>
+
+          <span
+            style={{
+              borderRadius: "999px",
+              padding: "10px 14px",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              color: "rgba(255,255,255,0.82)",
+              fontWeight: 800,
+            }}
+          >
+            Palabras detectadas: {totalWords}
+          </span>
+        </div>
+
+        <BookVoiceAgent
+          title={book.title}
+          subtitle={book.subtitle}
+          introText={introText}
+          chapters={book.chapters}
+        />
+
+        <div
+          style={{
+            marginTop: "28px",
+            padding: "22px",
+            borderRadius: "20px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          <strong style={{ color: "#facc15" }}>Resumen:</strong>
+          <p style={{ lineHeight: 1.8, marginBottom: 0 }}>
+            {book.summary}
+          </p>
+        </div>
+
+        <section style={{ marginTop: "34px" }}>
+          {book.chapters.map((chapter) => (
+            <section
+              key={chapter.number}
+              style={{
+                marginTop: "24px",
+                paddingTop: "24px",
+                borderTop: "1px solid rgba(255,255,255,0.12)",
+              }}
+            >
+              <p
+                style={{
+                  margin: "0 0 8px",
+                  color: "#facc15",
+                  fontWeight: 900,
+                }}
+              >
+                Capítulo {chapter.number}
+              </p>
+
+              <h2
+                style={{
+                  margin: "0 0 12px",
+                  fontSize: "28px",
+                }}
+              >
+                {chapter.title}
+              </h2>
+
+              <p
+                style={{
+                  fontSize: "18px",
+                  lineHeight: 1.9,
+                  color: "rgba(255,255,255,0.82)",
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {chapter.body}
+              </p>
+            </section>
+          ))}
+        </section>
+
+        <div
+          style={{
+            marginTop: "34px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "14px",
+          }}
+        >
+          <Link
+            href={`/catalog/${safeSlug}/preview`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "999px",
+              padding: "14px 22px",
+              background: "rgba(255,255,255,0.08)",
+              color: "white",
+              border: "1px solid rgba(255,255,255,0.18)",
+              textDecoration: "none",
+              fontWeight: 800,
+            }}
+          >
+            Volver al preview
+          </Link>
+
+          <Link
+            href={`/summary/${safeSlug}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "999px",
+              padding: "14px 22px",
+              background: "white",
+              color: "#020617",
+              textDecoration: "none",
+              fontWeight: 900,
+            }}
+          >
+            Ver resumen
+          </Link>
+        </div>
+      </article>
+    </main>
+  );
+}
+'@
+
+Write-AppFile -Path $readerPagePath -Content $readerPageContent
+
+# ============================================================
+# 4. VERIFICACIÓN FINAL
+# ============================================================
+
+Write-Host ""
+Write-Host "========================================" -ForegroundColor DarkGray
+Write-Host "VERIFICACIÓN FINAL" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor DarkGray
+Write-Host ""
+
+$checks = @(
+  $bookTextPath,
+  $libPath,
+  $readerPagePath
+)
+
+foreach ($check in $checks) {
+  if ([System.IO.File]::Exists($check)) {
+    Write-Host "OK:" $check -ForegroundColor Green
+  } else {
+    Write-Host "FALTA:" $check -ForegroundColor Red
+  }
+}
+
+Write-Host ""
+Write-Host "Archivo del libro completo:" -ForegroundColor Cyan
+Write-Host $bookTextPath -ForegroundColor Yellow
+
+Write-Host ""
+Write-Host "Cantidad de caracteres cargados:" -ForegroundColor Cyan
+Write-Host $bookTextContent.Length -ForegroundColor Yellow
+
+Write-Host ""
+Write-Host "Reinicia limpio:" -ForegroundColor Cyan
+Write-Host "taskkill /F /IM node.exe" -ForegroundColor Yellow
+Write-Host "npm run dev" -ForegroundColor Yellow
+
+Write-Host ""
+Write-Host "Ruta para probar:" -ForegroundColor Cyan
+Write-Host "http://localhost:3000/reader/lectura-demo" -ForegroundColor Yellow
+
+Write-Host ""
+Write-Host "Si necesitas pegar el libro manualmente, abre este archivo:" -ForegroundColor Cyan
+Write-Host "notepad content\books\lectura-demo.txt" -ForegroundColor Yellow
+
+Write-Host ""
+Write-Host "LISTO: el agente ahora leerá el texto completo real del archivo del libro." -ForegroundColor Green
+Write-Host ""

@@ -1,0 +1,72 @@
+export type DemoChapter = {
+  number: number;
+  title: string;
+  body: string;
+};
+
+export type DemoReadingContent = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  promise: string;
+  audience: string;
+  highlights: string[];
+  chapters: DemoChapter[];
+};
+
+function titleFromSlug(slug: string) {
+  const decoded = decodeURIComponent(slug || "lectura-demo");
+  const clean = decoded.replace(/[-_]+/g, " ").trim();
+
+  if (!clean) {
+    return "Lectura Demo";
+  }
+
+  return clean.charAt(0).toUpperCase() + clean.slice(1);
+}
+
+export function getDemoReadingContent(slug: string): DemoReadingContent {
+  const safeSlug = slug || "lectura-demo";
+  const title = safeSlug === "lectura-demo"
+    ? "Lectura Demo"
+    : titleFromSlug(safeSlug);
+
+  return {
+    slug: safeSlug,
+    title,
+    subtitle: "Preview, resumen y lector interno funcionando dentro de la plataforma.",
+    summary:
+      "Este es un resumen de demostración. Aquí el lector puede entender de qué trata el libro antes de entrar al contenido completo. La idea es que esta página sirva como muestra gratuita, ficha rápida y punto de decisión.",
+    promise:
+      "Al terminar esta lectura, el usuario podrá entender la idea central del libro, revisar sus puntos clave y decidir si desea leer el contenido completo.",
+    audience:
+      "Lectores, clientes, compradores, autores, estudiantes y usuarios que necesitan revisar un libro antes de abrirlo completo.",
+    highlights: [
+      "Resumen gratuito antes de leer el libro completo.",
+      "Preview elegante tipo ficha comercial.",
+      "Lector interno conectado por slug.",
+      "Flujo listo para conectar luego con base de datos, pagos o acceso premium.",
+    ],
+    chapters: [
+      {
+        number: 1,
+        title: "El comienzo de la lectura",
+        body:
+          "Este primer capítulo confirma que el lector interno ya puede mostrar contenido real dentro de la aplicación. En producción, este texto puede venir desde una base de datos, un EPUB, un PDF convertido, Markdown o contenido generado por IA.",
+      },
+      {
+        number: 2,
+        title: "La idea principal",
+        body:
+          "La plataforma debe permitir que el usuario vea primero una muestra, luego un resumen y finalmente el libro completo. Este orden evita confusión y mejora la experiencia de compra o lectura.",
+      },
+      {
+        number: 3,
+        title: "El libro completo",
+        body:
+          "Aquí se puede conectar el contenido completo del libro. Más adelante se pueden agregar capítulos reales, progreso de lectura, bloqueo por compra, notas, marcador de página y lector por secciones.",
+      },
+    ],
+  };
+}

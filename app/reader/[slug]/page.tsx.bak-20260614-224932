@@ -1,0 +1,84 @@
+type ReaderPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function ReaderPage({ params }: ReaderPageProps) {
+  const { slug } = await params;
+  const title = decodeURIComponent(slug);
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "48px 20px",
+        background:
+          "radial-gradient(circle at top, rgba(249,115,22,0.22), transparent 35%), #020617",
+        color: "white",
+      }}
+    >
+      <section
+        style={{
+          maxWidth: "920px",
+          margin: "0 auto",
+          borderRadius: "28px",
+          padding: "36px",
+          border: "1px solid rgba(255,255,255,0.14)",
+          background: "rgba(15,23,42,0.92)",
+          boxShadow: "0 30px 80px rgba(0,0,0,0.35)",
+        }}
+      >
+        <p
+          style={{
+            margin: "0 0 10px",
+            color: "#facc15",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
+          Lector interno
+        </p>
+
+        <h1
+          style={{
+            margin: "0 0 18px",
+            fontSize: "clamp(32px, 6vw, 58px)",
+            lineHeight: 1,
+          }}
+        >
+          Lectura iniciada
+        </h1>
+
+        <p
+          style={{
+            fontSize: "20px",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.82)",
+          }}
+        >
+          Estás leyendo:
+          <br />
+          <strong style={{ color: "white" }}>{title}</strong>
+        </p>
+
+        <div
+          style={{
+            marginTop: "28px",
+            padding: "22px",
+            borderRadius: "18px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          <p style={{ margin: 0, lineHeight: 1.7 }}>
+            Esta página confirma que el botón funciona. Luego aquí se puede
+            conectar el contenido real del libro, avatar, PDF, EPUB, capítulos
+            o lectura interna.
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+}

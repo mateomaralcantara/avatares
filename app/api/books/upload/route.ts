@@ -1,0 +1,201 @@
+import { NextRequest, NextResponse } from "next/server";
+import fs from "node:fs/promises";
+import path from "node:path";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+function slugify(value: string) {
+  return String(value || "libro-subido")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\.[a-z0-9]+$/i, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 90) || "libro-subido";
+}
+
+function cleanExtractedText(value: string) {
+  return String(value || "")
+    .replace(/\u0000/g, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{4,}/g, "\n\n\n")
+    .trim();
+}
+
+function stripHtml(value: string) {
+  return String(value || "")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function looksLikeTechnicalScript(text: string) {
+  const patterns = [
+    /\$projectPath\s*=/i,
+    /Set-Location\s+-?Path/i,
+    /Write-Host/i,
+    /Write-AppFile/i,
+    /Write-Utf8File/i,
+    /Get-Clipboard/i,
+    /New-Object\s+System\.Text\.UTF8Encoding/i,
+    /System\.IO\.File/i,
+    /System\.IO\.Directory/i,
+    /function\s+[A-Za-z0-9_-]+\s*\{/i,
+    /export\s+type\s+/i,
+    /export\s+function\s+/i,
+    /import\s+fs\s+from/i,
+    /import\s+path\s+from/i,
+    /NextResponse\.json/i,
+    /Select-String/i,
+    /npm\s+install/i,
+  ];
+
+  const hits = patterns.filter((pattern) => pattern.test(text)).length;
+
+  return hits >= 2;
+}
+
+async function extractEpubText(buffer: Buffer) {
+  const AdmZipModule: any = await import("adm-zip");
+  const AdmZip = AdmZipModule.default || AdmZipModule;
+  const zip = new AdmZip(buffer);
+  const entries = zip.getEntries();
+
+  const htmlEntries = entries
+    .filter((entry: any) => /\.(xhtml|html|htm)$/i.test(entry.entryName))
+    .sort((a: any, b: any) => a.entryName.localeCompare(b.entryName));
+
+  const parts: string[] = [];
+
+  for (const entry of htmlEntries) {
+    const html = entry.getData().toString("utf8");
+    const text = stripHtml(html);
+
+    if (text.length > 50) {
+      parts.push(text);
+    }
+  }
+
+  return parts.join("\n\n");
+}
+
+async function extractTextFromFile(file: File) {
+  const fileName = file.name || "libro.txt";
+  const extension = path.extname(fileName).toLowerCase();
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  if (extension === ".txt" || extension === ".md" || extension === ".markdown") {
+    return buffer.toString("utf8");
+  }
+
+  if (extension === ".pdf") {
+    const pdfParseModule: any = await import("pdf-parse");
+    const pdfParse = pdfParseModule.default || pdfParseModule;
+    const result = await pdfParse(buffer);
+    return result.text || "";
+  }
+
+  if (extension === ".docx") {
+    const mammoth: any = await import("mammoth");
+    const result = await mammoth.extractRawText({ buffer });
+    return result.value || "";
+  }
+
+  if (extension === ".epub") {
+    return await extractEpubText(buffer);
+  }
+
+  throw new Error("Formato no soportado. Usa TXT, MD, PDF, DOCX o EPUB.");
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get("file");
+
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "No se recibió ningún archivo.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const rawSlug =
+      String(formData.get("slug") || "").trim() ||
+      file.name ||
+      "libro-subido";
+
+    const slug = slugify(rawSlug);
+    const extractedText = cleanExtractedText(await extractTextFromFile(file));
+
+    if (extractedText.length < 200) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message:
+            "El archivo no tiene suficiente texto extraíble. Sube un libro con texto real, no una imagen escaneada.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (looksLikeTechnicalScript(extractedText)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message:
+            "Ese archivo parece contener código técnico, no un libro. No fue guardado.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const booksDir = path.join(process.cwd(), "content", "books");
+    await fs.mkdir(booksDir, { recursive: true });
+
+    const bookPath = path.join(booksDir, `${slug}.txt`);
+
+    const finalText = extractedText.startsWith("#")
+      ? extractedText
+      : `# ${rawSlug.replace(/\.[a-z0-9]+$/i, "")}\n\n${extractedText}`;
+
+    await fs.writeFile(bookPath, finalText, "utf8");
+
+    const totalWords = finalText.split(/\s+/g).filter(Boolean).length;
+
+    return NextResponse.json({
+      ok: true,
+      slug,
+      totalWords,
+      savedPath: `content/books/${slug}.txt`,
+      readerUrl: `/reader/${slug}?autoplay=1`,
+      previewUrl: `/catalog/${slug}/preview`,
+      message: "Libro subido y conectado al agente lector.",
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Error desconocido al subir el libro.",
+      },
+      { status: 500 }
+    );
+  }
+}

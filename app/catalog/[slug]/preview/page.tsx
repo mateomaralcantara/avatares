@@ -1,0 +1,169 @@
+import Link from "next/link";
+import { VoiceReader } from "../../../../components/voice-reader";
+import { getDemoReadingContent } from "../../../../lib/demo-reading-content";
+
+type PreviewPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function PreviewPage({ params }: PreviewPageProps) {
+  const { slug } = await params;
+  const book = getDemoReadingContent(slug);
+  const safeSlug = encodeURIComponent(book.slug);
+
+  const previewVoiceText = [
+    book.title,
+    book.subtitle,
+    "Resumen rápido.",
+    book.summary,
+    "Promesa al lector.",
+    book.promise,
+    "Qué incluye.",
+    book.highlights.join(". "),
+  ].join(". ");
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "48px 20px",
+        background:
+          "radial-gradient(circle at top left, rgba(250,204,21,0.22), transparent 34%), radial-gradient(circle at bottom right, rgba(249,115,22,0.18), transparent 30%), #020617",
+        color: "white",
+      }}
+    >
+      <section
+        style={{
+          maxWidth: "980px",
+          margin: "0 auto",
+          borderRadius: "30px",
+          padding: "36px",
+          border: "1px solid rgba(255,255,255,0.14)",
+          background: "rgba(15,23,42,0.92)",
+          boxShadow: "0 30px 90px rgba(0,0,0,0.38)",
+        }}
+      >
+        <p
+          style={{
+            margin: "0 0 10px",
+            color: "#facc15",
+            fontWeight: 900,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
+          Preview del libro
+        </p>
+
+        <h1
+          style={{
+            margin: "0 0 14px",
+            fontSize: "clamp(34px, 6vw, 64px)",
+            lineHeight: 1,
+          }}
+        >
+          {book.title}
+        </h1>
+
+        <p
+          style={{
+            maxWidth: "760px",
+            fontSize: "19px",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.78)",
+          }}
+        >
+          {book.subtitle}
+        </p>
+
+        <VoiceReader
+          title="Escuchar preview y resumen"
+          text={previewVoiceText}
+        />
+
+        <div
+          style={{
+            marginTop: "28px",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "18px",
+          }}
+        >
+          <article
+            style={{
+              padding: "22px",
+              borderRadius: "22px",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          >
+            <h2 style={{ marginTop: 0 }}>Resumen rápido</h2>
+            <p style={{ lineHeight: 1.7, color: "rgba(255,255,255,0.76)" }}>
+              {book.summary}
+            </p>
+          </article>
+
+          <article
+            style={{
+              padding: "22px",
+              borderRadius: "22px",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          >
+            <h2 style={{ marginTop: 0 }}>Promesa al lector</h2>
+            <p style={{ lineHeight: 1.7, color: "rgba(255,255,255,0.76)" }}>
+              {book.promise}
+            </p>
+          </article>
+        </div>
+
+        <div
+          style={{
+            marginTop: "34px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "14px",
+          }}
+        >
+          <Link
+            href={`/summary/${safeSlug}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "999px",
+              padding: "14px 22px",
+              background: "white",
+              color: "#020617",
+              textDecoration: "none",
+              fontWeight: 900,
+            }}
+          >
+            Leer resumen gratis
+          </Link>
+
+          <Link
+            href={`/reader/${safeSlug}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "999px",
+              padding: "14px 22px",
+              background: "linear-gradient(135deg, #facc15, #f97316)",
+              color: "#111827",
+              textDecoration: "none",
+              fontWeight: 900,
+              boxShadow: "0 16px 35px rgba(249,115,22,0.32)",
+            }}
+          >
+            Leer libro completo
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}

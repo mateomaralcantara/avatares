@@ -1,0 +1,149 @@
+import Link from "next/link";
+import { VoiceReader } from "../../../components/voice-reader";
+import { getDemoReadingContent } from "../../../lib/demo-reading-content";
+
+type SummaryPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function SummaryPage({ params }: SummaryPageProps) {
+  const { slug } = await params;
+  const book = getDemoReadingContent(slug);
+  const safeSlug = encodeURIComponent(book.slug);
+
+  const summaryVoiceText = [
+    `Resumen gratuito de ${book.title}`,
+    book.summary,
+    "Puntos clave.",
+    book.highlights.join(". "),
+    "Para quién es.",
+    book.audience,
+  ].join(". ");
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "48px 20px",
+        background:
+          "radial-gradient(circle at top, rgba(250,204,21,0.18), transparent 34%), #020617",
+        color: "white",
+      }}
+    >
+      <article
+        style={{
+          maxWidth: "860px",
+          margin: "0 auto",
+          borderRadius: "28px",
+          padding: "36px",
+          border: "1px solid rgba(255,255,255,0.14)",
+          background: "rgba(15,23,42,0.94)",
+          boxShadow: "0 30px 80px rgba(0,0,0,0.34)",
+        }}
+      >
+        <p
+          style={{
+            margin: "0 0 10px",
+            color: "#facc15",
+            fontWeight: 900,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
+          Resumen gratuito
+        </p>
+
+        <h1
+          style={{
+            margin: "0 0 18px",
+            fontSize: "clamp(34px, 6vw, 58px)",
+            lineHeight: 1,
+          }}
+        >
+          {book.title}
+        </h1>
+
+        <VoiceReader
+          title="Escuchar resumen en voz alta"
+          text={summaryVoiceText}
+        />
+
+        <p
+          style={{
+            marginTop: "28px",
+            fontSize: "20px",
+            lineHeight: 1.8,
+            color: "rgba(255,255,255,0.82)",
+          }}
+        >
+          {book.summary}
+        </p>
+
+        <section
+          style={{
+            marginTop: "28px",
+            padding: "22px",
+            borderRadius: "20px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          <h2 style={{ marginTop: 0 }}>Puntos clave</h2>
+
+          <ul style={{ lineHeight: 1.9, marginBottom: 0 }}>
+            {book.highlights.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+
+        <div
+          style={{
+            marginTop: "34px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "14px",
+          }}
+        >
+          <Link
+            href={`/catalog/${safeSlug}/preview`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "999px",
+              padding: "14px 22px",
+              background: "rgba(255,255,255,0.08)",
+              color: "white",
+              border: "1px solid rgba(255,255,255,0.18)",
+              textDecoration: "none",
+              fontWeight: 800,
+            }}
+          >
+            Volver al preview
+          </Link>
+
+          <Link
+            href={`/reader/${safeSlug}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "999px",
+              padding: "14px 22px",
+              background: "linear-gradient(135deg, #facc15, #f97316)",
+              color: "#111827",
+              textDecoration: "none",
+              fontWeight: 900,
+              boxShadow: "0 16px 35px rgba(249,115,22,0.32)",
+            }}
+          >
+            Leer libro completo
+          </Link>
+        </div>
+      </article>
+    </main>
+  );
+}
